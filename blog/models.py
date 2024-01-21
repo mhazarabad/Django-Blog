@@ -3,14 +3,14 @@ from ckeditor.fields import RichTextField
 
 class Category(models.Model):
     name = models.CharField(max_length=150, db_index=True, unique=True)
-    slug = models.SlugField(max_length=159, unique=True, db_index=True)
+    slug = models.SlugField(max_length=150, unique=True, db_index=True)
     
     def __str__(self):
         return self.name
     
 class Tag(models.Model):
     name = models.CharField(max_length=150, db_index=True, unique=True)
-    slug = models.SlugField(max_length=159, unique=True, db_index=True)
+    slug = models.SlugField(max_length=150, unique=True, db_index=True)
     
     def __str__(self):
         return self.name
@@ -18,7 +18,7 @@ class Tag(models.Model):
 class Post(models.Model):
     header_image = models.ImageField(upload_to='post_images')
     title = models.CharField(max_length=150, unique=True, db_index=True)
-    slug = models.SlugField(max_length=159, unique=True, db_index=True)
+    slug = models.SlugField(max_length=150, unique=True, db_index=True)
     summary = models.TextField(blank=True, default=None,null=True)
     content = RichTextField()
     STATUS_CHOICES = (
