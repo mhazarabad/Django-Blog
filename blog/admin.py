@@ -98,4 +98,10 @@ class CommentAdmin(admin.ModelAdmin):
     ordering = ('created', 'modified')
     actions = [make_hidden, make_visible, delete_selected]
     filter_horizontal = ('liked_by', 'disliked_by')
+    list_filter = ('hided',)
+    show_facets = admin.ShowFacets.ALWAYS
+
+    def add_view(self, request, form_url='', extra_context=None):
+        self.exclude = ('hided','liked_by','disliked_by')
+        return super().add_view(request, form_url, extra_context)
 # Register your models here.

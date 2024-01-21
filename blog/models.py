@@ -53,7 +53,7 @@ class Post(models.Model):
         return True if self.liked_by.filter(id__in=self.disliked_by.values_list('id', flat=True)).exists() else False
         
     def save(self, *args, **kwargs):
-        if self.check_duplicate_in_liked_and_disliked:
+        if self.id and self.check_duplicate_in_liked_and_disliked:
             self.disliked_by.remove(self.liked_by.get(id__in=self.disliked_by.values_list('id', flat=True)))# or raise Exception('duplicate')
         self.summary = self.content[:200]+' ...'
         super().save(*args, **kwargs)
@@ -87,7 +87,7 @@ class Comment(models.Model):
         return True if self.liked_by.filter(id__in=self.disliked_by.values_list('id', flat=True)).exists() else False
         
     def save(self, *args, **kwargs):
-        if self.check_duplicate_in_liked_and_disliked:
+        if self.id and self.check_duplicate_in_liked_and_disliked:
             self.disliked_by.remove(self.liked_by.get(id__in=self.disliked_by.values_list('id', flat=True)))# or raise Exception('duplicate')
         super().save(*args, **kwargs)
 
