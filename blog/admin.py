@@ -5,8 +5,9 @@ def delete_selected(modeladmin, request, queryset):
     """
     to delete selected posts and avoid database overload
     """
-    for group_idx in range(0, len(queryset), 100):
-        queryset[group_idx:group_idx+100].delete()
+    queryset_ids = queryset.values_list('id', flat=True)
+    for group_idx in range(0, len(queryset_ids), 100):
+        queryset.filter(id__in=queryset_ids[group_idx:group_idx+100]).delete()
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -36,15 +37,17 @@ def make_published(modeladmin, request, queryset):
     """
     to publish selected posts and avoid database overload
     """
-    for group_idx in range(0, len(queryset), 100):
-        queryset[group_idx:group_idx+100].update(status='published')
+    queryset_ids = queryset.values_list('id', flat=True)
+    for group_idx in range(0, len(queryset_ids), 100):
+        queryset.filter(id__in=queryset_ids[group_idx:group_idx+100]).update(status='published')
 
 def make_draft(modeladmin, request, queryset):
     """
     to draf selected posts and avoid database overload
     """
-    for group_idx in range(0, len(queryset), 100):
-        queryset[group_idx:group_idx+100].update(status='draft')
+    queryset_ids = queryset.values_list('id', flat=True)
+    for group_idx in range(0, len(queryset_ids), 100):
+        queryset.filter(id__in=queryset_ids[group_idx:group_idx+100]).update(status='draft')
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -56,13 +59,13 @@ class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'modified'
     ordering = ('created', 'modified')
-    filter_horizontal = ('tags',)
+    filter_horizontal = ('tags','liked_by','disliked_by')
     read_only = ('author','summary')
     actions = [make_published, make_draft, delete_selected]
     show_facets = admin.ShowFacets.ALWAYS
 
     def add_view(self, request, form_url='', extra_context=None):
-        self.exclude = ('author','summary')
+        self.exclude = ('author','summary','liked_by','disliked_by')
         return super().add_view(request, form_url, extra_context)
     
     # asign the current user as the author of the post
@@ -74,15 +77,17 @@ def make_hidden(modeladmin, request, queryset):
     """
     to hide selected comments and avoid database overload
     """
-    for group_idx in range(0, len(queryset), 100):
-        queryset[group_idx:group_idx+100].update(hided=True)
+    queryset_ids = queryset.values_list('id', flat=True)
+    for group_idx in range(0, len(queryset_ids), 100):
+        queryset.filter(id__in=queryset_ids[group_idx:group_idx+100]).update(hided=True)
 
 def make_visible(modeladmin, request, queryset):
     """
     to show selected comments and avoid database overload
     """
-    for group_idx in range(0, len(queryset), 100):
-        queryset[group_idx:group_idx+100].update(hided=False)
+    queryset_ids = queryset.values_list('id', flat=True)
+    for group_idx in range(0, len(queryset_ids), 100):
+        queryset.filter(id__in=queryset_ids[group_idx:group_idx+100]).update(hided=False)
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
@@ -92,4 +97,5 @@ class CommentAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     ordering = ('created', 'modified')
     actions = [make_hidden, make_visible, delete_selected]
+    filter_horizontal = ('liked_by', 'disliked_by')
 # Register your models here.
