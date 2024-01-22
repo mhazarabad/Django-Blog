@@ -1,0 +1,278 @@
+openapi: 3.0.1
+info:
+  title: API Documents for v1.0 of blog web interface
+  description: This is the API documentation for the blog web interface only for version 1.0 and is not to be used for any other version. in order to change the data, please login to Django admin panel.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api/v1.0
+    description: v1.0 of blog web interface
+paths:
+  /posts/:
+    get:
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: search
+          in: query
+          description: Search in title, content and summary of posts
+          required: false
+          schema:
+            type: string
+            default: ''
+        - name: category_slug
+          in: query
+          description: Filter posts by category slug
+          required: false
+          schema:
+            type: string
+            default: ''
+        - name: tag_slug
+          in: query
+          description: Filter posts by tag slug
+          required: false
+          schema:
+            type: string
+            default: ''
+      summary: Get list of all published posts paginated by 10
+      description: Retrieve posts list. This endpoint is paginated by 10 posts per page by default.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/postPreviewListResponse'
+      security: []
+  /posts/{post_id}/:
+    get:
+      parameters:
+        - name: post_id
+          in: path
+          description: Post id
+          required: true
+          schema:
+            type: integer
+      summary: Get full data of a post
+      description: Retrieve full data of a post
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/postFullData'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    description: Error message
+      security: []
+  /categories/:
+    get:
+      summary: Get list of all categories
+      description: Retrieve categories list
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/postCategoryResponse'
+      security: []
+
+
+components:
+  schemas:
+    postPreviewListResponse:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/postPreview'
+        page:
+          type: integer
+          description: Page number
+        num_pages:
+          type: integer
+          description: Number of pages
+        num_posts:
+          type: integer
+          description: Number of posts
+        category_slug:
+          type: string
+          description: Category slug received in request
+        tag_slug:
+          type: string
+          description: Tag slug received in request
+        search:
+          type: string
+          description: Search query received in request
+    postPreview:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Post id
+        title:
+          type: string
+          description: Post title
+        summary:
+          type: string
+          description: Post summary
+        slug:
+          type: string
+          description: Post slug
+        header_image_url:
+          type: string
+          description: Post header image url - relative to root
+        category:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Category name
+            slug:
+              type: string
+              description: Category slug
+        created:
+          type: string
+          description: Post created at
+          format: "date time, example: 2020-01-25 00:00:00"
+    postFullData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Post id
+        title:
+          type: string
+          description: Post title
+        summary:
+          type: string
+          description: Post summary
+        slug:
+          type: string
+          description: Post slug
+        header_image_url:
+          type: string
+          description: Post header image url - relative to root
+        category:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Category name
+            slug:
+              type: string
+              description: Category slug
+        tags:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Tag name
+              slug:
+                type: string
+                description: Tag slug
+        created:
+          type: string
+          description: Post created at
+          format: "date time, example: 2020-01-25 00:00:00"
+        status:
+          type: string
+          description: Post status
+          enum:
+            - draft
+            - published
+        status_text:
+          type: string
+          description: Post status text
+          enum:
+            - Draft
+            - Published
+        content:
+          type: string
+          description: Post content in HTML format
+        author:
+          type: string
+          description: Post author full name
+        total_likes:
+          type: integer
+          description: Total number of likes on post
+        total_dislikes:
+          type: integer
+          description: Total number of dislikes on post
+        total_comments:
+          type: integer
+          description: Total number of comments on post
+        comments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Comment id
+              name:
+                type: string
+                description: Comment name
+              replies:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Reply id
+                    name:
+                      type: string
+                      description: Reply name
+                    content:
+                      type: string
+                      description: Reply content
+                    created:
+                      type: string
+                      description: Reply created at
+                      format: "date time, example: 2020-01-25 00:00:00"
+                    total_likes:
+                      type: integer
+                      description: Total number of likes on reply
+                    total_dislikes:
+                      type: integer
+                      description: Total number of dislikes on reply
+              content:
+                type: string
+                description: Comment content
+              created:
+                type: string
+                description: Comment created at
+                format: "date time, example: 2020-01-25 00:00:00"
+              total_likes:
+                total_likes:
+                  type: integer
+                  description: Total number of likes on comment
+              total_dislikes:
+                type: integer
+                description: Total number of dislikes on comment
+    postCategoryResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Category name
+        slug:
+          type: string
+          description: Category slug        
