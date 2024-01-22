@@ -4,6 +4,18 @@ from ckeditor.fields import RichTextField
 class Category(models.Model):
     name = models.CharField(max_length=150, db_index=True, unique=True)
     slug = models.SlugField(max_length=150, unique=True, db_index=True)
+
+    @property
+    def response(self):
+        return {
+            'name': self.name,
+            'slug': self.slug,
+        }
+    
+    @classmethod
+    def get_used_categories(cls):
+        from .models import Post
+        return cls.objects.filter(id__in=set(Post.objects.values_list('id', flat=True)))
     
     def __str__(self):
         return self.name
@@ -12,6 +24,13 @@ class Tag(models.Model):
     name = models.CharField(max_length=150, db_index=True, unique=True)
     slug = models.SlugField(max_length=150, unique=True, db_index=True)
     
+    @property
+    def response(self):
+        return {
+            'name': self.name,
+            'slug': self.slug,
+        }
+
     def __str__(self):
         return self.name
 
@@ -36,6 +55,39 @@ class Post(models.Model):
     liked_by = models.ManyToManyField(to=User, blank=True, related_name='liked_posts')
     disliked_by = models.ManyToManyField(to=User, blank=True, related_name='disliked_posts')
     
+    @property
+    def full_data_response(self):
+        return {
+            'id': self.id, # for APIs
+            'header_image_url': self.header_image.url,
+            'title': self.title,
+            'slug': self.slug,
+            'summary': self.summary,
+            'content': self.content,
+            'status': self.status,
+            'status_text': self.get_status_display(),
+            'author': self.author.get_full_name(),
+            'category': self.category.response,
+            'tags': [tag.response for tag in self.tags.all()],
+            'created': self.created.strftime('%Y-%m-%d %H:%M:%S'),
+            'total_likes': self.total_likes,
+            'total_dislikes': self.total_dislikes,
+            'total_comments': self.total_comments,
+            'comments': [comment.full_data_response for comment in self.comment_set.all()],
+        }
+    
+    @property
+    def preview_response(self):
+        return {
+            'id': self.id, # for APIs
+            'header_image_url': self.header_image.url,
+            'title': self.title,
+            'slug': self.slug,
+            'summary': self.summary,
+            'category': self.category.response,
+            'created': self.created.strftime('%Y-%m-%d %H:%M:%S'),
+        }
+
     @property
     def total_likes(self):
         return self.liked_by.count()
@@ -73,6 +125,22 @@ class Comment(models.Model):
     liked_by = models.ManyToManyField(to=User, blank=True, related_name='liked_comments')
     disliked_by = models.ManyToManyField(to=User, blank=True, related_name='disliked_comments')
     hided = models.BooleanField(default=False)
+
+    @property
+    def full_data_response(self):
+        return {
+            'id': self.id, # for APIs
+            'name': self.name,
+            'content': self.content,
+            'replies': self.get_all_replies,
+            'created': self.created.strftime('%Y-%m-%d %H:%M:%S'),
+            'total_likes': self.total_likes,
+            'total_dislikes': self.total_dislikes,
+        }
+    
+    @property
+    def get_all_replies(self):
+        return [reply.full_data_response for reply in self.comment_set.filter(hided=False)]
 
     @property
     def total_likes(self):
