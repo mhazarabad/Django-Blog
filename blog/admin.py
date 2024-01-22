@@ -60,12 +60,12 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = 'modified'
     ordering = ('created', 'modified')
     filter_horizontal = ('tags','liked_by','disliked_by')
-    read_only = ('author','summary')
+    read_only = ('author',)
     actions = [make_published, make_draft, delete_selected]
     show_facets = admin.ShowFacets.ALWAYS
 
     def add_view(self, request, form_url='', extra_context=None):
-        self.exclude = ('author','summary','liked_by','disliked_by')
+        self.exclude = ('author','liked_by','disliked_by')
         return super().add_view(request, form_url, extra_context)
     
     # asign the current user as the author of the post
@@ -101,7 +101,9 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('hided',)
     show_facets = admin.ShowFacets.ALWAYS
 
+    exclude = ('email_hash',)
+
     def add_view(self, request, form_url='', extra_context=None):
-        self.exclude = ('hided','liked_by','disliked_by')
+        self.exclude = ('hided','liked_by','disliked_by','email_hash')
         return super().add_view(request, form_url, extra_context)
 # Register your models here.

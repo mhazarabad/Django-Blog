@@ -55,7 +55,6 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         if self.id and self.check_duplicate_in_liked_and_disliked:
             self.disliked_by.remove(self.liked_by.get(id__in=self.disliked_by.values_list('id', flat=True)))# or raise Exception('duplicate')
-        self.summary = self.content[:200]+' ...'
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -65,6 +64,7 @@ class Comment(models.Model):
     post = models.ForeignKey(to=Post, on_delete=models.CASCADE)
     name = models.CharField(max_length=150)
     email = models.EmailField()
+    email_hash = models.CharField(max_length=150, blank=True, null=True)
     content = models.TextField()
     reply_to = models.ForeignKey(to='self', on_delete=models.CASCADE, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -89,6 +89,8 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         if self.id and self.check_duplicate_in_liked_and_disliked:
             self.disliked_by.remove(self.liked_by.get(id__in=self.disliked_by.values_list('id', flat=True)))# or raise Exception('duplicate')
+        from hashlib import sha256
+        self.email_hash = sha256(self.email.encode()).hexdigest()
         super().save(*args, **kwargs)
 
     def __str__(self):
