@@ -1,0 +1,28 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block main %}
+  <div class="content">
+    <div class="row">
+		{% for post in page_object.object_list %}
+      <div class="col-lg-4 col-md-4 col-sm-6">
+        <article class="post-grid mb-5">
+          <a class="post-thumb mb-4 d-block" href="/{{post.slug}}/"><img src="{{post.header_image.url}}" alt="{{post.title}}" class="img-fluid w-100" /></a>
+
+          <div class="post-content-grid">
+            <div class="label-date">
+              <span class="day">{{post.created.year}}</span>
+              <span class="month text-uppercase">{{post.created|date:'F'}}</span>
+            </div>
+            <span class="cat-name text-color font-extra font-sm text-uppercase letter-spacing">{{post.category.name}}</span>
+            <h3 class="post-title mt-1"><a href="/{{post.slug}}/">{{post.title}}</a></h3>
+            <p>{{post.summary}}</p>
+          </div>
+        </article>
+      </div>
+	  	{% endfor %}
+    </div>
+
+    {% include "blog/pagination.html" with page_object=page_object only %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% load static %}
+{% now "Y" as current_year %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>MHAzarabad - Blog Portfolio</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!--Favicon-->
+	<link rel="shortcut icon" href="{% static 'blog/favicon.ico" type="image/x-icon' %}"/>
+
+	<!-- THEME CSS
+	================================================== -->
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="{% static 'blog/plugins/bootstrap/css/bootstrap.min.css' %}">
+	<!-- Themify -->
+	<link rel="stylesheet" href="{% static 'blog/plugins/themify/css/themify-icons.css' %}">
+	<link rel="stylesheet" href="{% static 'blog/plugins/slick-carousel/slick-theme.css' %}">
+	<link rel="stylesheet" href="{% static 'blog/plugins/slick-carousel/slick.css' %}">
+	<!-- Slick Carousel -->
+	<link rel="stylesheet" href="{% static 'blog/plugins/owl-carousel/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'blog/plugins/owl-carousel/owl.theme.default.min.css' %}">
+	<link rel="stylesheet" href="{% static 'blog/plugins/magnific-popup/magnific-popup.css' %}">
+	<!-- manin stylesheet -->
+	<link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
+</head>
+
+<body>
+	<header class="header-top bg-grey justify-content-center py-2 d-lg-none">
+		<div class="container-fluid">
+			<nav class="navbar navbar-expand-lg navigation-2 navigation">
+				<a class="navbar-brand" href="#">
+					<img src="images/logo.png" alt="" class="img-fluid">
+				</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse"
+					aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="ti-menu"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbar-collapse">
+					<ul id="menu" class="menu navbar-nav mx-auto">
+						<li class="nav-item dropdown"></li>
+                        <li class="nav-item"><a href="/" class="nav-link">All Categories</a></li>
+                        {% for category in categories%}
+						<li class="nav-item"><a href="/c={{category.slug}}/" class="nav-link">{{category.name}}</a></li>
+                        {% endfor %}
+					</ul>
+				</div>
+			</nav>
+		</div>
+	</header>
+
+	<div class="section-padding pb-0">
+		<div class="sidebar d-none d-lg-block">
+			<div class="sidebar-sticky">
+				<div class="logo-wrapper">
+					<a class="navbar-brand" href="#">
+						<img src="images/logo.png" alt="" class="img-fluid">
+					</a>
+				</div>
+
+				<div class="main-menu">
+					<nav class="navbar navbar-expand-lg p-0">
+						<div class="navbar-collapse collapse" id="navbarsExample09" style="">
+							<ul class="list-unstyled ">
+                                <li class="nav-item">
+									<a class="nav-link" href="/">All Categories</a>
+								</li>
+                                {% for category in categories %}
+								<li class="nav-item">
+									<a class="nav-link" href="/c={{category.slug}}/">{{category.name}}</a>
+								</li>
+                                {% endfor %}
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</div>
+
+		</div>
+
+		{% block main %}
+        {% endblock %}
+
+	</div>
+
+	<div class="footer-home bg-grey py-4">
+		<div class="row">
+			<div class="col-lg-10 text-center text-lg-left">
+				This Website is developed by <a href="https://mhazarabad.github.io">Hadi Azarabad</a> &copy; {{current_year}}
+			</div>
+			<div class="col-lg-2">
+				<ul class="list-inline mb-0">
+                    <li class="list-inline-item"><a href="https://github.com/mhazarabad"><i class="ti-github"></i></a></li>
+                    <li class="list-inline-item"><a href="https://linkedin.com/in/mhazarabad"><i class="ti-linkedin"></i></a></li>
+                    <li class="list-inline-item"><a href="https://instagram.com/mhazarabad"><i class="ti-instagram"></i></a></li>
+                    <li class="list-inline-item"><a href="mailto:mhazarabad@gmail.com"><i class="ti-email"></i></a></li>
+                </ul>
+			</div>
+		</div>
+	</div>
+	</div>
+
+
+
+	<!-- THEME JAVASCRIPT FILES
+================================================== -->
+	<!-- initialize jQuery Library -->
+	<script src="{% static 'blog/plugins/jquery/jquery.js' %}"></script>
+	
+
+    <script src="{% static 'blog/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'blog/plugins/bootstrap/js/popper.min.js' %}"></script>
+	<!-- Owl caeousel -->
+	<script src="{% static 'blog/plugins/owl-carousel/owl.carousel.min.js' %}"></script>
+	<script src="{% static 'blog/plugins/slick-carousel/slick.min.js' %}"></script>
+	<script src="{% static 'blog/plugins/magnific-popup/magnific-popup.js' %}"></script>
+	<!-- Instagram Feed Js -->
+	<script src="{% static 'blog/plugins/instafeed-js/instafeed.min.js' %}"></script>
+	<!-- main js -->
+	<script src="{% static 'blog/js/custom.js' %}"></script>
+
+
+</body>
+
+</html>
