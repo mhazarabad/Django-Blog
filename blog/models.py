@@ -57,9 +57,11 @@ class Post(models.Model):
     
     @property
     def full_data_response(self):
+        from django.conf import settings
+        static_url = settings.WEB_URL
         return {
             'id': self.id, # for APIs
-            'header_image_url': self.header_image.url,
+            'header_image_url': static_url+self.header_image.url,
             'title': self.title,
             'slug': self.slug,
             'summary': self.summary,
@@ -78,9 +80,11 @@ class Post(models.Model):
     
     @property
     def preview_response(self):
+        from django.conf import settings
+        static_url = settings.WEB_URL
         return {
             'id': self.id, # for APIs
-            'header_image_url': self.header_image.url,
+            'header_image_url': static_url+self.header_image.url,
             'title': self.title,
             'slug': self.slug,
             'summary': self.summary,

@@ -32,11 +32,11 @@ def Query_Post(request:HttpRequest):
     from django.http import JsonResponse
 
     # Extract data from request
-    page = Extract_Data_From_JSON(request=request, key='page', request_section='query', value_type=int, default=1)
-    page_size = Extract_Data_From_JSON(request=request, key='page_size', request_section='query', value_type=int, default=10)
-    category_slug = Extract_Data_From_JSON(request=request, key='category_slug', request_section='query', value_type=str, default='')
-    tag_slug = Extract_Data_From_JSON(request=request, key='tag_slug', request_section='query', value_type=str, default='')
-    search = Extract_Data_From_JSON(request=request, key='search', request_section='query', value_type=str, default='')
+    page = Extract_Data_From_JSON(request=request, key='page', request_section='body', value_type=int, default=1)
+    page_size = Extract_Data_From_JSON(request=request, key='page_size', request_section='body', value_type=int, default=12)
+    category_slug = Extract_Data_From_JSON(request=request, key='category_slug', request_section='body', value_type=str, default='')
+    tag_slug = Extract_Data_From_JSON(request=request, key='tag_slug', request_section='body', value_type=str, default='')
+    search = Extract_Data_From_JSON(request=request, key='search', request_section='body', value_type=str, default='')
 
     # Query
     q_category_slug = Q(category__slug=category_slug) if category_slug else Q()
@@ -45,6 +45,7 @@ def Query_Post(request:HttpRequest):
     q_status = Q(status='published')
 
     posts = Post.objects.filter(q_category_slug&q_tag_slug&q_search&q_status).order_by('-created')
+
     paginator = Paginator(posts, page_size)
     try:
         posts = paginator.page(page)
@@ -66,13 +67,13 @@ def Query_Post(request:HttpRequest):
         'search': search,
     }, status=200)
 
-def Query_Post_Detail(request:HttpRequest, post_id:int):
+def Query_Post_Detail(request:HttpRequest, post_slug:int):
     from blog.models import Post
     from django.http import JsonResponse
     from django.shortcuts import get_object_or_404
 
-    post = get_object_or_404(Post, id=post_id)
-    return JsonResponse(data=post.full_data_response, status=200)
+    post = get_object_or_404(Post, slug=post_slug)
+    return JsonResponse(data={'post':post.full_data_response}, status=200)
 
 def Query_Category(request:HttpRequest):
     from blog.models import Category
