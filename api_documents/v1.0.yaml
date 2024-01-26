@@ -48,12 +48,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/postPreviewListResponse'
       security: []
-  /posts/{post_id}/:
+  /posts/{post_slug}/:
     get:
       parameters:
-        - name: post_id
+        - name: post_slug
           in: path
-          description: Post id
+          description: Post slug
           required: true
           schema:
             type: integer
